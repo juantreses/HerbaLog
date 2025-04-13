@@ -59,6 +59,7 @@ docker exec -it herbalog npm run db:push
 
 ## 📅 Project Structure
 
+```graphql
 HerbaLog/
 ├── client/             # React frontend
 ├── server/             # Node.js backend (Express)
@@ -66,6 +67,7 @@ HerbaLog/
 ├── docker-compose.yml  # Development container orchestration
 ├── .env.dist           # Environment variable template
 └── README.md
+```
 
 ✉️ Contributing
 
