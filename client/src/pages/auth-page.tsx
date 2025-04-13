@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { useLocation } from "wouter";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -10,13 +10,14 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "../components/ui/form";
-import { Input } from "../components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+} from "../components/ui/form.tsx";
+import { Input } from "../components/ui/input.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs.tsx";
 import { ShoppingBag, Package, User, Mail, Lock } from "lucide-react";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../components/ui/card";
-import {useAuth} from '../hooks/use-auth';
-import {Button} from "../components/ui/button";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "../components/ui/card.tsx";
+import {useAuth} from '../hooks/use-auth.tsx';
+import {Button} from "../components/ui/button.tsx";
+import {Role} from "@shared/roles.ts";
 
 const loginSchema = z.object({
     email: z.string().email("Vul een geldig e-mailadres in"),
@@ -24,10 +25,11 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
-    name: z.string().min(2, "Naam moet minstens 2 karakters lang zijn"),
+    firstName: z.string().min(2, "Voornaam moet minstens 2 karakters lang zijn"),
+    lastName: z.string().min(2, "Naam moet minstens 2 karakters lang zijn"),
     email: z.string().email("Vul een geldig e-mailadres in"),
     password: z.string().min(6, "Wachtwoord moet minstens 6 karakters lang zijn"),
-    role: z.string().default("distributor"),
+    role: z.nativeEnum(Role).default(Role.DISTRIBUTOR),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -38,6 +40,7 @@ export default function AuthPage() {
     const [, navigate] = useLocation();
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
+    const [activeTab, setActiveTab] = useState("login");
 
     const loginForm = useForm<LoginValues>({
         resolver: zodResolver(loginSchema),
@@ -50,10 +53,11 @@ export default function AuthPage() {
     const registerForm = useForm<RegisterValues>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            name: "",
+            firstName: "",
+            lastName: "",
             email: "",
             password: "",
-            role: "distributor",
+            role: Role.DISTRIBUTOR,
         },
     });
 
@@ -69,7 +73,8 @@ export default function AuthPage() {
 
     const onRegisterSubmit = (data: RegisterValues) => {
         registerMutation.mutate({
-            name: data.name,
+            firstName: data.firstName,
+            lastName: data.lastName,
             email: data.email,
             password: data.password,
             role: data.role,
@@ -92,7 +97,7 @@ export default function AuthPage() {
                         <h1 className="ml-3 text-2xl font-bold text-primary">HerbaLog</h1>
                     </div>
 
-                    <Tabs defaultValue="login" className="w-full">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="login" className="w-full">
                         <TabsList className="grid w-full grid-cols-2 mb-6">
                             <TabsTrigger value="login">Login</TabsTrigger>
                             <TabsTrigger value="register">Registreer</TabsTrigger>
@@ -114,7 +119,7 @@ export default function AuthPage() {
                                                 name="email"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Email</FormLabel>
+                                                        <FormLabel>E-mail</FormLabel>
                                                         <FormControl>
                                                             <div className="flex items-center border rounded-md focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                                                                 <Mail className="ml-3 h-4 w-4 text-secondary-400" />
@@ -134,7 +139,7 @@ export default function AuthPage() {
                                                 name="password"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Password</FormLabel>
+                                                        <FormLabel>Wachtwoord</FormLabel>
                                                         <FormControl>
                                                             <div className="flex items-center border rounded-md focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                                                                 <Lock className="ml-3 h-4 w-4 text-secondary-400" />
@@ -167,12 +172,11 @@ export default function AuthPage() {
                                             href="#register"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                const elem = document.querySelector('[data-value="register"]') as HTMLElement;
-                                                if (elem) elem.click();
+                                                setActiveTab('register');
                                             }}
                                             className="text-primary hover:underline"
                                         >
-                                            Register
+                                            Registreer
                                         </a>
                                     </p>
                                 </CardFooter>
@@ -182,7 +186,7 @@ export default function AuthPage() {
                         <TabsContent value="register">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Create an account</CardTitle>
+                                    <CardTitle>Maak een account aan</CardTitle>
                                     <CardDescription>
                                         Start met HerbaLog en hou je Herbalife-producten moeiteloos bij
                                     </CardDescription>
@@ -192,15 +196,35 @@ export default function AuthPage() {
                                         <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
                                             <FormField
                                                 control={registerForm.control}
-                                                name="name"
+                                                name="firstName"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Full Name</FormLabel>
+                                                        <FormLabel>Voornaam</FormLabel>
                                                         <FormControl>
                                                             <div className="flex items-center border rounded-md focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                                                                 <User className="ml-3 h-4 w-4 text-secondary-400" />
                                                                 <Input
-                                                                    placeholder="John Doe"
+                                                                    placeholder="John"
+                                                                    className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                                                    {...field}
+                                                                />
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={registerForm.control}
+                                                name="lastName"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Naam</FormLabel>
+                                                        <FormControl>
+                                                            <div className="flex items-center border rounded-md focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                                                                <User className="ml-3 h-4 w-4 text-secondary-400" />
+                                                                <Input
+                                                                    placeholder="Doe"
                                                                     className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                                                                     {...field}
                                                                 />
@@ -215,7 +239,7 @@ export default function AuthPage() {
                                                 name="email"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Email</FormLabel>
+                                                        <FormLabel>E-mail</FormLabel>
                                                         <FormControl>
                                                             <div className="flex items-center border rounded-md focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                                                                 <Mail className="ml-3 h-4 w-4 text-secondary-400" />
@@ -235,7 +259,7 @@ export default function AuthPage() {
                                                 name="password"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel>Password</FormLabel>
+                                                        <FormLabel>Wachtwoord</FormLabel>
                                                         <FormControl>
                                                             <div className="flex items-center border rounded-md focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                                                                 <Lock className="ml-3 h-4 w-4 text-secondary-400" />
@@ -268,12 +292,11 @@ export default function AuthPage() {
                                             href="#login"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                const elem = document.querySelector('[data-value="login"]') as HTMLElement;
-                                                if (elem) elem.click();
+                                                setActiveTab('login');
                                             }}
                                             className="text-primary hover:underline"
                                         >
-                                            Sign in
+                                            Log in
                                         </a>
                                     </p>
                                 </CardFooter>

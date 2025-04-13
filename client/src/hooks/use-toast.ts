@@ -1,5 +1,5 @@
 import * as React from "react"
-import {ToastActionElement, ToastProps} from "../components/ui/toast";
+import {ToastActionElement, ToastProps} from "@/components/ui/toast.tsx";
 
 
 const TOAST_LIMIT = 1

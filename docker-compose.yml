@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    container_name: herbalog
+    ports:
+      - "5000:5000"
+    environment:
+        - NODE_ENV=development
+        - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    networks:
+      - herbalog-network
+
+  db:
+    image: postgres:17
+    container_name: herbalog_db
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - herbalog-network
+
+volumes:
+  pgdata:
+
+networks:
+  herbalog-network:
+    driver: bridge

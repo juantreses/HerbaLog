@@ -1,12 +1,8 @@
-import { createContext, ReactNode, useContext } from "react";
-import {
-    useQuery,
-    useMutation,
-    UseMutationResult,
-} from "@tanstack/react-query";
-import { User as SelectUser, InsertUser } from '@shared/schema'
-import { apiRequest, queryClient } from "../lib/queryClient";
-import {useToast} from "./use-toast";
+import {createContext, ReactNode, useContext} from "react";
+import {useMutation, UseMutationResult, useQuery,} from "@tanstack/react-query";
+import {InsertUser, User as SelectUser} from '@shared/schema.ts'
+import {apiRequest, queryClient} from "@/lib/QueryClient.ts";
+import {useToast} from "@/hooks/use-toast.ts";
 
 type AuthContextType = {
     user: SelectUser | null;
@@ -37,27 +33,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = useQuery<SelectUser | null, Error>({
         queryKey: ["/api/user"],
         queryFn: async ({ queryKey }) => {
-            console.log("Fetching user data from", queryKey[0]);
             const res = await fetch(queryKey[0] as string, {
                 credentials: "include",
             });
 
-            console.log("User API response status:", res.status);
-
             if (res.status === 401) {
-                console.log("User not authenticated");
                 return null;
             }
 
             if (!res.ok) {
                 const text = await res.text();
-                console.error("Error fetching user:", text || res.statusText);
                 throw new Error(`${res.status}: ${text || res.statusText}`);
             }
 
-            const userData = await res.json();
-            console.log("User data received:", userData);
-            return userData;
+            return await res.json();
         },
         retry: false,
         refetchOnWindowFocus: false,
@@ -65,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const loginMutation = useMutation<SelectUser, Error, LoginData>({
         mutationFn: async (credentials: LoginData) => {
-            console.log("Logging in with:", credentials.email);
             try {
                 const res = await fetch("/api/login", {
                     method: "POST",
@@ -80,20 +68,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     throw new Error(errorText || "Invalid credentials");
                 }
 
-                const userData = await res.json();
-                console.log("Login response:", userData);
-                return userData;
+                return await res.json();
             } catch (error) {
                 console.error("Login error details:", error);
                 throw error;
             }
         },
         onSuccess: (user: SelectUser) => {
-            console.log("Login successful, setting user data:", user);
             queryClient.setQueryData(["/api/user"], user);
             toast({
-                title: "Logged in successfully",
-                description: `Welcome back, ${user.name}!`,
+                title: "Succesvol ingelogd",
+                description: `Welkom terug, ${user.firstName}!`,
             });
             // Force a refetch of the user data to ensure it's properly refreshed
             queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -103,8 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         onError: (error: Error) => {
             console.error("Login error:", error);
             toast({
-                title: "Login failed",
-                description: error.message || "Invalid credentials. Please try again.",
+                title: "Login mislukt",
+                description: error.message || "Je inloggegevens kloppen niet. Probeer het opnieuw.",
                 variant: "destructive",
             });
         },
@@ -112,7 +97,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const registerMutation = useMutation<SelectUser, Error, RegisterData>({
         mutationFn: async (data: RegisterData) => {
-            console.log("Registering with:", data.email);
             try {
                 const res = await fetch("/api/register", {
                     method: "POST",
@@ -124,23 +108,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 if (!res.ok) {
                     const errorText = await res.text();
                     console.error("Registration error response:", res.status, errorText);
-                    throw new Error(errorText || "Registration failed");
+                    throw new Error(errorText || "Registratie mislukt");
                 }
 
-                const userData = await res.json();
-                console.log("Registration response:", userData);
-                return userData;
+                return await res.json();
             } catch (error) {
                 console.error("Registration error details:", error);
                 throw error;
             }
         },
         onSuccess: (user: SelectUser) => {
-            console.log("Registration successful, setting user data:", user);
             queryClient.setQueryData(["/api/user"], user);
             toast({
-                title: "Registration successful",
-                description: `Welcome to HerbaInventory, ${user.name}!`,
+                title: "Yes! Je bent nu geregistreerd",
+                description: `Welkom bij HerbaLog, ${user.firstName}!`,
             });
             // Force a refetch of the user data to ensure it's properly refreshed
             queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -150,8 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         onError: (error: Error) => {
             console.error("Registration error:", error);
             toast({
-                title: "Registration failed",
-                description: error.message || "Could not create account. Please try again.",
+                title: "Hmm... er ging iets fout bij het registreren.",
+                description: error.message || "Er ging iets fout bij het aanmaken van je account. Probeer het opnieuw.",
                 variant: "destructive",
             });
         },
@@ -164,15 +145,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         onSuccess: () => {
             queryClient.setQueryData(["/api/user"], null);
             toast({
-                title: "Logged out successfully",
-                description: "You have been logged out of your account.",
+                title: "Je bent uitgelogd. Tot snel!",
+                description: "Je bent succesvol uitgelogd uit je account.",
             });
             // Redirect to login page after logout
             window.location.href = "/auth";
         },
         onError: (error: Error) => {
             toast({
-                title: "Logout failed",
+                title: "Het is niet gelukt om uit te loggen",
                 description: error.message,
                 variant: "destructive",
             });
