@@ -4,7 +4,7 @@ import connectPg from "connect-pg-simple";
 import {
     User, InsertUser,
     users,
-} from "@shared/schema";
+} from "@shared/db/schema/users.ts";
 import {db, pool} from "./db.ts";
 import {Role} from "@shared/roles.ts";
 
@@ -55,7 +55,6 @@ export class DatabaseStorage implements IStorage {
         const normalizedEmail = insertUser.email.toLowerCase(); // Normalize email to lowercase
         const role = insertUser.role || Role.DISTRIBUTOR;
 
-        console.log(insertUser);
         const [user] = await db.insert(users).values({
             ...insertUser,
             email: normalizedEmail,
