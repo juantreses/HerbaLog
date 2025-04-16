@@ -1,17 +1,17 @@
-// server/routes/productCategories.ts
+// server/routes/categories.ts
 import {Router} from 'express';
-import {db} from '../db';
+import {db} from '../../db.ts';
 import {
     insertProductCategorySchema,
     insertValidationProductCategorySchema,
     productCategories
 } from "@shared/db/schema/products/categories.ts";
-import requireAdmin from "../middleware/requireAdmin.ts";
+import requireAdmin from "../../middleware/requireAdmin.ts";
 import {z} from "zod";
-import {recordAdminActivity} from "../utils/adminActivityLogger.ts";
+import {recordAdminActivity} from "../../utils/adminActivityLogger.ts";
 import {AdminActivity} from "@shared/db/schema/admin/activities.ts";
 import {sql} from "drizzle-orm";
-import {storage} from "../storage";
+import {storage} from "../../storage";
 
 const productCategoriesRouter = Router();
 

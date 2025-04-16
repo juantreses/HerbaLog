@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "../auth.ts";
-import productCategoriesRouter from "./productCategories.ts";
-import adminActivitiesRouter from "./adminActivities.ts";
+import productCategoriesRouter from "./products/categories.ts";
+import adminActivitiesRouter from "./admin/activities.ts";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
