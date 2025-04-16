@@ -5,7 +5,7 @@ import {
     timestamp,
     varchar,
 } from "drizzle-orm/pg-core";
-import {createInsertSchema} from "drizzle-zod";
+import {createInsertSchema, createSelectSchema} from "drizzle-zod";
 import {z} from "zod";
 import {Role} from "@shared/roles.ts";
 
@@ -28,6 +28,15 @@ export const insertUserSchema = createInsertSchema(users).pick({
     role: true
 });
 
+export const publicUserSchema = createSelectSchema(users).pick({
+    id: true,
+    email: true,
+    firstName: true,
+    lastName: true,
+    role: true
+});
+
 // Types derived from schemas
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export type FullUser = typeof users.$inferSelect;
+export type PublicUser = z.infer<typeof publicUserSchema>;

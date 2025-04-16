@@ -4,6 +4,7 @@ import {
     LayoutDashboard,
     ShoppingBag,
     LogOut,
+    FolderKanban, Clock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,9 @@ export default function Sidebar() {
     const getAdminItems = (role: Role | undefined) => {
     const items = [];
     if (hasFeature(role, "manageProducts")) {
-        items.push({ icon: ShoppingBag, text: "Productbeheer", path: "/admin/products" });
+        items.push({ icon: ShoppingBag, text: "Producten", path: "/admin/products" });
+        items.push({ icon: FolderKanban, text: "Categorieën", path: "/admin/categories" });
+        items.push({ icon: Clock, text: "Activiteit", path: "/admin/activities" });
     }
     // Add more features here as needed
     return items;
@@ -54,16 +57,17 @@ const adminItems = getAdminItems(user?.role);
                 <ul>
                     {sidebarItems.map((item, index) => (
                         <li key={index}>
-                            <Link href={item.path}>
-                                <a className={cn(
+                            <Link
+                                href={item.path}
+                                className={cn(
                                     "flex items-center px-4 py-3 text-sm",
                                     isActive(item.path)
                                         ? "bg-primary text-white"
                                         : "hover:bg-primary-50 text-secondary-700"
-                                )}>
-                                    <item.icon className="mr-3 h-5 w-5" />
-                                    <span className="sidebar-text">{item.text}</span>
-                                </a>
+                                )}
+                            >
+                                <item.icon className="mr-3 h-5 w-5" />
+                                <span className="sidebar-text">{item.text}</span>
                             </Link>
                         </li>
                     ))}
@@ -78,16 +82,17 @@ const adminItems = getAdminItems(user?.role);
                         <ul>
                             {adminItems.map((item, index) => (
                                 <li key={index}>
-                                    <Link href={item.path}>
-                                        <a className={cn(
+                                    <Link
+                                        href={item.path}
+                                        className={cn(
                                             "flex items-center px-4 py-3 text-sm",
                                             isActive(item.path)
                                                 ? "bg-primary text-white"
                                                 : "hover:bg-primary-50 text-secondary-700"
-                                        )}>
-                                            <item.icon className="mr-3 h-5 w-5" />
-                                            <span className="sidebar-text">{item.text}</span>
-                                        </a>
+                                        )}
+                                    >
+                                        <item.icon className="mr-3 h-5 w-5" />
+                                        <span className="sidebar-text">{item.text}</span>
                                     </Link>
                                 </li>
                             ))}

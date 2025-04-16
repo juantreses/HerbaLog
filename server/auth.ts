@@ -5,7 +5,7 @@ import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
-import { User as SelectUser } from "@shared/db/schema/users.ts";
+import { FullUser as SelectUser } from "@shared/db/schema/users.ts";
 
 declare global {
     namespace Express {
