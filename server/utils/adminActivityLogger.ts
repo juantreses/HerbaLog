@@ -1,5 +1,5 @@
-import {storage} from "../storage.ts";
 import {AdminActivity} from "@shared/db/schema/admin_activity.ts";
+import {storage} from "../storage";
 
 type AdminActivityParams = {
     userId: number;
@@ -12,10 +12,9 @@ export async function recordAdminActivity({
                                               action,
                                               details,
                                           }: AdminActivityParams) {
-    await storage.createAdminActivity({
+    await storage.adminActivities.create({
         userId,
         action,
         details: JSON.stringify(details),
-        timestamp: new Date()
     })
 }

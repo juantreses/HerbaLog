@@ -1,15 +1,16 @@
 import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import {Strategy as LocalStrategy} from "passport-local";
+import {Express} from "express";
 import session from "express-session";
-import { scrypt, randomBytes, timingSafeEqual } from "crypto";
-import { promisify } from "util";
-import { storage } from "./storage";
-import { FullUser as SelectUser } from "@shared/db/schema/users.ts";
+import {scrypt, randomBytes, timingSafeEqual} from "crypto";
+import {promisify} from "util";
+import {FullUser as SelectUser} from "@shared/db/schema/users.ts";
+import {storage} from "./storage";
 
 declare global {
     namespace Express {
-        interface User extends SelectUser {}
+        interface User extends SelectUser {
+        }
     }
 }
 
@@ -53,7 +54,7 @@ export function setupAuth(app: Express) {
             },
             async (email, password, done) => {
                 try {
-                    const user = await storage.getUserByEmail(email);
+                    const user = await storage.users.byEmail(email);
                     if (!user || !(await comparePasswords(password, user.password))) {
                         return done(null, false);
                     } else {
@@ -69,7 +70,7 @@ export function setupAuth(app: Express) {
     passport.serializeUser((user, done) => done(null, user.id));
     passport.deserializeUser(async (id: number, done) => {
         try {
-            const user = await storage.getUser(id);
+            const user = await storage.users.byId(id);
             done(null, user);
         } catch (error) {
             done(error);
@@ -78,12 +79,12 @@ export function setupAuth(app: Express) {
 
     app.post("/api/register", async (req, res, next) => {
         try {
-            const existingUser = await storage.getUserByEmail(req.body.email);
+            const existingUser = await storage.users.byEmail(req.body.email);
             if (existingUser) {
                 return res.status(400).send("Email already in use");
             }
 
-            const user = await storage.createUser({
+            const user = await storage.users.create({
                 ...req.body,
                 password: await hashPassword(req.body.password),
             });
@@ -101,14 +102,14 @@ export function setupAuth(app: Express) {
         try {
             // Validate required fields
             if (!req.body || !req.body.email || !req.body.password) {
-                return res.status(400).json({ message: "Email and password are required" });
+                return res.status(400).json({message: "Email and password are required"});
             }
 
             // Check if the user exists first, for debugging
-            const userExists = await storage.getUserByEmail(req.body.email);
+            const userExists = await storage.users.byEmail(req.body.email);
 
             if (!userExists) {
-                return res.status(401).json({ message: "Invalid email or password" });
+                return res.status(401).json({message: "Invalid email or password"});
             }
 
             passport.authenticate("local", (err: Error | null, user: Express.User | false, info: any) => {
@@ -118,7 +119,7 @@ export function setupAuth(app: Express) {
                 }
 
                 if (!user) {
-                    return res.status(401).json({ message: "Invalid email or password" });
+                    return res.status(401).json({message: "Invalid email or password"});
                 }
 
                 req.login(user, (err: Error | null) => {
@@ -131,7 +132,7 @@ export function setupAuth(app: Express) {
             })(req, res, next);
         } catch (error) {
             console.error("Unexpected error during login:", error);
-            return res.status(500).json({ message: "Internal server error" });
+            return res.status(500).json({message: "Internal server error"});
         }
     });
 

@@ -7,11 +7,11 @@ import {
     productCategories
 } from "@shared/db/schema/product_categories.ts";
 import requireAdmin from "../middleware/requireAdmin.ts";
-import {storage} from "../storage.ts";
 import {z} from "zod";
 import {recordAdminActivity} from "../utils/adminActivityLogger.ts";
 import {AdminActivity} from "@shared/db/schema/admin_activity.ts";
 import {sql} from "drizzle-orm";
+import {storage} from "../storage";
 
 const productCategoriesRouter = Router();
 
@@ -36,7 +36,7 @@ productCategoriesRouter.post('/', requireAdmin, async (req, res) => {
             return res.status(400).json({error: 'Naam is verplicht.'});
         }
 
-        const category = await storage.createProductCategory({
+        const category = await storage.products.categories.create({
             ...validatedData,
             createdById: req.user.id
         });
@@ -69,7 +69,7 @@ productCategoriesRouter.get('/check-name', async (req, res) => {
     console.debug('checking');
     const normalizedName = req.query.name?.toString().trim().toLowerCase();
     if (!normalizedName) {
-        return res.status(400).json({ error: 'Naam is verplicht.' });
+        return res.status(400).json({error: 'Naam is verplicht.'});
     }
 
     try {
@@ -79,14 +79,12 @@ productCategoriesRouter.get('/check-name', async (req, res) => {
             .where(sql`lower(${productCategories.name}) = ${normalizedName}`)
             .limit(1);
 
-        res.json({ exists: existing.length > 0 });
+        res.json({exists: existing.length > 0});
     } catch (error) {
         console.error('Error checking category name uniqueness:', error);
-        res.status(500).json({ error: 'Interne fout.' });
+        res.status(500).json({error: 'Interne fout.'});
     }
 });
-
-
 
 
 export default productCategoriesRouter;

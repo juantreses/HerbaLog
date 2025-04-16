@@ -14,7 +14,15 @@ export const adminActivities = pgTable("admin_activities", {
     timestamp: timestamp("timestamp", {mode: 'string'}).defaultNow().notNull(),
 });
 
-export const insertActivitySchema = createInsertSchema(adminActivities)
+export const insertActivitySchema = createInsertSchema(adminActivities).pick({
+    userId: true,
+    action: true,
+    details: true,
+}).partial(
+    {
+        details: true,
+    }
+);
 
 export type InsertAdminActivity = z.infer<typeof insertActivitySchema>;
 export type AdminActivityRecord = typeof adminActivities.$inferSelect;
