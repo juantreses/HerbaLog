@@ -14,6 +14,7 @@ HerbaLog is a web application designed for Herbalife distributors to manage thei
 ## ✨ Features
 
 - Authentication and Authorization
+- Admin interface to manage product categories
 
 ## 🚀 Tech Stack
 
