@@ -1,4 +1,4 @@
-import {FullUser, InsertUser, users} from "@shared/db/schema/users.ts";
+import {FullUser, InsertUser, users} from "@shared/db/schema/users/users.ts";
 import {db} from "../../db.ts";
 import {eq} from "drizzle-orm";
 import {Role} from "@shared/roles.ts";

@@ -3,7 +3,7 @@ import {
     productCategories,
     type InsertProductCategory,
     type ProductCategory
-} from "@shared/db/schema/product_categories";
+} from "@shared/db/schema/products/categories.ts";
 import {db} from "../../db.ts";
 
 export async function get(): Promise<ProductCategory[]> {

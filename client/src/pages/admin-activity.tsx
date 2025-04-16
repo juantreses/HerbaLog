@@ -2,11 +2,11 @@ import {useAuth} from "@/hooks/use-auth.tsx";
 import {useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {Calendar, CirclePlus, Filter, RotateCcw} from "lucide-react";
-import {AdminActivity, AdminActivityRecord} from "@shared/db/schema/admin_activity.ts";
+import {AdminActivity, AdminActivityRecord} from "@shared/db/schema/admin/activities.ts";
 import PageHeader from "@/components/layout/page-header.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {FullUser} from "@shared/db/schema/users.ts";
+import {FullUser} from "@shared/db/schema/users/users.ts";
 import {
     Pagination,
     PaginationContent,

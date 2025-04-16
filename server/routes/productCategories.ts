@@ -5,11 +5,11 @@ import {
     insertProductCategorySchema,
     insertValidationProductCategorySchema,
     productCategories
-} from "@shared/db/schema/product_categories.ts";
+} from "@shared/db/schema/products/categories.ts";
 import requireAdmin from "../middleware/requireAdmin.ts";
 import {z} from "zod";
 import {recordAdminActivity} from "../utils/adminActivityLogger.ts";
-import {AdminActivity} from "@shared/db/schema/admin_activity.ts";
+import {AdminActivity} from "@shared/db/schema/admin/activities.ts";
 import {sql} from "drizzle-orm";
 import {storage} from "../storage";
 
