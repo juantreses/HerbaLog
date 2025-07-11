@@ -1,5 +1,5 @@
 import {integer, numeric, pgTable, serial, timestamp} from "drizzle-orm/pg-core";
-import {products} from "@shared/db/schema/products/products.ts";
+import {products} from "@db/schema/products/products.ts";
 
 export const productPrices = pgTable('product_prices', {
     id: serial("id").primaryKey(),

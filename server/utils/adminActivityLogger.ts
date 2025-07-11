@@ -1,4 +1,4 @@
-import {AdminActivity} from "@shared/db/schema/admin/activities.ts";
+import {AdminActivity} from "@db/schema/admin/activities.ts";
 import {storage} from "../storage";
 
 type AdminActivityParams = {

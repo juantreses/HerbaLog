@@ -1,6 +1,6 @@
-import {adminActivities, AdminActivityRecord, InsertAdminActivity} from "@shared/db/schema/admin/activities.ts";
-import {db} from "../../db.ts";
-import {PublicUser, publicUserSchema, users} from "@shared/db/schema/users/users.ts";
+import {adminActivities, AdminActivityRecord, InsertAdminActivity} from "@db/schema/admin/activities.ts";
+import {db} from "@db/db.ts";
+import {PublicUser, publicUserSchema, users} from "@db/schema/users/users.ts";
 import {desc, eq} from "drizzle-orm";
 
 export async function create(insertAdminActivity: InsertAdminActivity): Promise<AdminActivityRecord> {

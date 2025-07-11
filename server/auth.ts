@@ -4,7 +4,7 @@ import {Express} from "express";
 import session from "express-session";
 import {scrypt, randomBytes, timingSafeEqual} from "crypto";
 import {promisify} from "util";
-import {FullUser as SelectUser} from "@shared/db/schema/users/users.ts";
+import {FullUser as SelectUser} from "@db/schema/users/users.ts";
 import {storage} from "./storage";
 
 declare global {

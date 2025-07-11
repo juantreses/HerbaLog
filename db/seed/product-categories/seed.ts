@@ -1,5 +1,5 @@
-import { db } from '../../db.ts';
-import { productCategories } from '../../schema/products/categories.ts';
+import { db } from '@db/db.ts';
+import { productCategories } from '@db/schema/products/categories.ts';
 
 const categories = [
     'Ontbijt / Maaltijden',

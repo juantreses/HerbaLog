@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useContext} from "react";
 import {useMutation, UseMutationResult, useQuery,} from "@tanstack/react-query";
-import {InsertUser, FullUser as SelectUser} from '@shared/db/schema/users/users.ts'
+import {InsertUser, FullUser as SelectUser} from '@db/schema/users/users.ts'
 import {apiRequest, queryClient} from "@/lib/QueryClient.ts";
 import {useToast} from "@/hooks/use-toast.ts";
 
